@@ -21,7 +21,7 @@ module.exports.deleteCard = (req, res) => {
     // eslint-disable-next-line consistent-return
     .then((card) => {
       if (!card) return Promise.reject(new Error('Карты нет'));
-      if (JSON.stringify(card.owner) !== JSON.stringify(req.user._id)) return Promise.reject(new Error('Не ваша карта, удалить нельзя!'));
+      if (JSON.stringify(card.owner) !== JSON.stringify(req.user._id)) return res.status(403).send({ message: 'Не ваша карта! Нельзя удалить!' });
     })
     .then((card) => (card === null ? res.status(404).send({ message: `Карточка с таким id: ${id} не найдена` }) : res.send({ data: card })))
     .catch((err) => res.status(500).send({ message: `Произошла ошибка при удалении карточки - ${err.message}` }));

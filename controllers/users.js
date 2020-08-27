@@ -14,15 +14,24 @@ module.exports.createUser = (req, res) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
-
   bcrypt.hash(password, 10)
     .then((hash) => {
       User.create({
         name, about, avatar, email, password: hash,
       })
-        .then((user) => res.send({ data: user }))
-        .catch((err) => res.status(400).send({ message: `Произошла ошибка при создании пользователя - ${err.message}` }));
-    });
+        .then((user) => res.send({
+          _id: user._id,
+          name: user.name,
+          about: user.about,
+          avatar: user.avatar,
+          email: user.email,
+        }))
+        .catch((err) => {
+          if (err.name === 'MongoError') res.status(409).send({ message: 'Пользователь с такими данными уже существует' });
+          res.status(400).send({ message: `Произошла ошибка при создании пользователя - ${err.message}` });
+        });
+    })
+    .catch(() => res.status(500).send({ massage: 'Забыли заполнить пароль!' }));
 };
 
 module.exports.getSpecificUser = (req, res) => {
