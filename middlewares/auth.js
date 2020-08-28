@@ -7,7 +7,7 @@ module.exports = (req, res, next) => {
   let payload;
 
   try {
-    payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : 'secrtephrase');
+    payload = jwt.verify(token, NODE_ENV === 'production' ? JWT_SECRET : 'secretphrase');
   } catch (err) {
     return res.status(401).send({ massage: 'Необходима авторизация!' });
   }
